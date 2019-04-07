@@ -1,0 +1,174 @@
+body {
+  margin: 0;
+  font-family: Helvetica, Arial, sans-serif;
+}
+#root {
+  width: 100vw;
+  height: 100vh;
+}
+
+.control-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: 320px;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  padding: 12px 24px;
+  margin: 20px;
+  font-size: 13px;
+  line-height: 2;
+  color: #6b6b76;
+  outline: none;
+  text-transform: uppercase;
+}
+
+input {
+  margin-left: 20px;
+  width: 160px;
+}
+
+.tooltip {
+  position: absolute;
+  margin: 8px;
+  padding: 4px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  max-width: 300px;
+  font-size: 10px;
+  z-index: 9;
+  pointer-events: none;
+}
+
+.legend {
+    position: absolute;
+    bottom: 30px;
+    right: 100px;
+    max-width: 320px;
+    background: #fff;
+    max-width: 320px;
+}
+
+.legend-scale {
+  line-height: 1;
+}
+
+.shadow {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12), 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.bottom-right {
+  position: absolute !important;
+  bottom: 0;
+  right: 0;
+}
+
+.bg-white {
+  background-color: #ffffff !important;
+}
+
+.soft-tiny {
+  padding: 12px !important
+}
+
+.push-small--bottom, .push-small--ends {
+  margin-bottom: 24px !important;
+}
+
+.push-tiny--right, .push-tiny--sides {
+  margin-right: 12px !important;
+}
+
+.legend-scale-color-group, .legend-scale-label-group {
+  white-space: nowrap;
+}
+
+.legend-scale-color, .legend-scale-label {
+  display: inline-block;
+}
+.legend-container .legend-scale-label {
+  font-size: 0.8em;
+  line-height: 1;
+  vertical-align: top;
+  color: #636363;
+  margin-top: 6px;
+  padding-left: 1px;
+}
+
+.label {
+  letter-spacing: 0.02em;
+  font-size: 12px;
+  line-height: 24px;
+  margin-bottom: 0;
+  font-weight: 500;
+}
+
+.legend-color-1 {
+  width: 27.272727272727273px;
+  height: 12px;
+  background-color: rgb(255, 255, 217);
+  background-position: initial initial;
+  background-repeat: initial initial;
+}
+
+.legend-color-2 {
+  width: 27.272727272727273px;
+  height: 12px;
+  background-color: rgb(202, 234, 180);
+  background-position: initial initial;
+  background-repeat: initial initial;
+}
+
+.legend-color-3 {
+  width: 27.2727px;
+  height: 12px;
+  background: rgb(143, 211, 186);
+}
+
+.legend-color-4 {
+  width: 27.2727px;
+  height: 12px;
+  background: rgb(80, 186, 195);
+}
+
+.legend-color-5 {
+  width: 27.2727px;
+  height: 12px;
+  background: rgb(43, 156, 193);
+}
+
+.legend-color-6 {
+  width: 27.2727px;
+  height: 12px;
+  background: rgb(34, 126, 183);
+}
+
+.legend-color-7 {
+  width: 27.2727px;
+  height: 12px;
+  background-color: rgb(34, 96, 169);
+}
+
+.legend-color-8 {
+  width: 27.2727px;
+  height: 12px;
+  background-color: rgb(26, 70, 138);
+}
+
+.legend-color-9 {
+  width: 27.2727px;
+  height: 12px;
+  background-color: rgb(17, 46, 109);
+}
+
+.legend-color-10 {
+  width: 27.2727px;
+  height: 12px;
+  background-color: rgb(5, 25, 77)
+}
+
+.legend-color-11 {
+  width: 27.2727px;
+  height: 12px;
+  background-color: rgb(0, 0, 39);
+}

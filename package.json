@@ -1,0 +1,46 @@
+{
+  "name": "CityMovements",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "babel": {
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-class-properties"
+    ]
+  },
+  "scripts": {
+    "prepare": "geojson-merge ./data/geoJson/*.geojson > ./dist/data/merged.json",
+    "build": "webpack -d --watch",
+    "start": "webpack-dev-server --progress --hot",
+    "start-local": "webpack-dev-server --env.local --progress --hot --open"
+  },
+  "dependencies": {
+    "@babel/core": "^7.4.0",
+    "@babel/node": "^7.2.2",
+    "@babel/plugin-proposal-class-properties": "^7.4.0",
+    "@babel/preset-env": "^7.4.2",
+    "@babel/preset-react": "^7.0.0",
+    "@turf/boolean-point-in-polygon": "^6.0.1",
+    "@turf/center": "^6.0.1",
+    "babel-loader": "^8.0.5",
+    "babel-polyfill": "^6.26.0",
+    "d3-fetch": "^1.1.2",
+    "d3-request": "^1.0.6",
+    "deck.gl": "^6.4.9",
+    "immutable": "^4.0.0-rc.12",
+    "is-empty": "^1.2.0",
+    "react": "^16.8.5",
+    "react-dom": "^16.8.5",
+    "react-map-gl": "^4.1.1",
+    "webpack": "^4.29.6"
+  },
+  "devDependencies": {
+    "@mapbox/geojson-merge": "^1.0.2",
+    "webpack-cli": "^3.3.0",
+    "webpack-dev-server": "^3.2.1"
+  }
+}
