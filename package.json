@@ -16,6 +16,7 @@
     "prepare": "geojson-merge ./data/geoJson/*.geojson > ./dist/data/merged.json",
     "build": "webpack -d --watch",
     "start": "webpack-dev-server --progress --hot",
+    "heroku-postbuild": "webpack -p",
     "start-local": "webpack-dev-server --env.local --progress --hot --open"
   },
   "dependencies": {
