@@ -1,4 +1,5 @@
 const center = require('@turf/center').default;
+import fs from 'fs';
 import fetch from 'node-fetch';
 import regions from '../dist/assets/nebula.json';
 
@@ -14,15 +15,18 @@ regions.features.map( region => {
   regionCenters.push(point);
 })
 
+const LINES_LENGHT = regionCenters.length
+
 const lines = [];
+let linesCount = 0;
 
 for(let i = 0 ;
-    i < 3; //i < regionCenters.length;
+    i < LINES_LENGHT;
     i++) {
   const destinationLon = regionCenters[i].center.geometry.coordinates[0];
   const destinationLat = regionCenters[i].center.geometry.coordinates[1];
 
-  let linesCount = 0;
+  let itemsCount = 0;
   const items = [];
 
   regionCenters.map( async (regionCenter, index) => {
@@ -52,7 +56,7 @@ for(let i = 0 ;
           console.error(err);
         }
 
-        if( ++linesCount >= regionCenters.length ) {
+        if( ++itemsCount >= regionCenters.length ) {
           resolve(true);
         }
 
@@ -63,9 +67,20 @@ for(let i = 0 ;
 
     console.log(items);
     lines.push(items);
+    if( ++linesCount >= LINES_LENGHT ) {
+      saveLines();
+    }
 
   })
 
 }
 
-console.log(lines);
+function saveLines() {
+  console.log(lines);
+  fs.writeFile('times.json', JSON.stringify(lines), (err) => {
+    if( err )
+      console.error(err);
+    else
+      console.log('times.json written');
+  })
+}
