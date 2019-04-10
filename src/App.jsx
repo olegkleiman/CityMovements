@@ -126,9 +126,9 @@ class App extends Component {
       this.setState({
         sourceMarker: {
           longitude: region.center.geometry.coordinates[0],
-          latitude: region.center.geometry.coordinates[1],
-          sourceRegoinId: region.id
-        }
+          latitude: region.center.geometry.coordinates[1]
+        },
+        sourceRegoinId: region.id
       });
     }
   };
@@ -140,9 +140,9 @@ class App extends Component {
       this.setState({
         targetMarker: {
           longitude: region.center.geometry.coordinates[0],
-          latitude: region.center.geometry.coordinates[1],
-          targetRegoinId: region.id
-        }
+          latitude: region.center.geometry.coordinates[1]
+        },
+        targetRegoinId: region.id
       });
     }
   };
@@ -238,23 +238,26 @@ class App extends Component {
             mapboxApiAccessToken={MAPBOX_TOKEN}
             onHover={this.onHover}
             onClick={this.onClick} >
-              <DeckGL {...viewport}
-                controller={true}>
-                <GeoJsonLayer id={'geojson-layer'}
-                  data={this.state.geoJsonData}
-                  filled={true}
-                  getFillColor={ (d) => {
-                    if( d.properties.Id == 8 ) {
+              <DeckGL {...viewport} layers = {[
+                 new GeoJsonLayer({
+                   id:'geojson-layer',
+                   data: this.state.geoJsonData,
+                   filled:true,
+                   updateTriggers: {
+                    getFillColor: this.state.sourceRegoinId
+                   },
+                   getFillColor: (d) => {
+                    if( d.properties.Id == this.state.sourceRegoinId ) {
                       return [255, 255, 217, 200]
                     } else {
-
                       const travelTime = TravelMatrix.getTravelTime(this.state.sourceRegoinId, d.properties.Id);
                       console.log(`Travel time between ${this.state.sourceRegoinId} and ${d.properties.Id}: ${travelTime}`);
                       return TravelMatrix.timeToColor(travelTime);
                     }
 
-                  }}
-                />
+                  }
+                })
+              ]}>
               { this.renderLineLayer() }
             </DeckGL>
             { this.renderPopup() }
