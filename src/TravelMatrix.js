@@ -1,5 +1,6 @@
 import moment from 'moment';
-import times from '../dist/assets/times.json';
+import Dexie from 'dexie';
+import times from '../dist/assets/etas.json';
 
 const palette =
 [
@@ -15,17 +16,52 @@ const palette =
   { min: 50, max: 60, color: [5, 25, 77, 200]}
 ];
 
-const TravelMatrix = {
+export default class TravelMatrix {
+
+  constructor() {
+    this.initialized = false;
+  }
+
+  async init(dbName) {
+
+        if( await !Dexie.exists(dbName) ) {
+          console.log(`${dbName} db does not exists`);
+          this.initialized = false;
+          return;
+        }
+
+        console.log('Trying to read from IndexedDB');
+
+        const db = new Dexie(dbName);
+        db.version(1).stores({
+          etas: '++id, originId, destinationId, period, day'
+        });
+        this.initialized = true;
+
+        try {
+
+          const collection =
+            await db.etas
+                .where('originId').equals(8)
+                // .and('destinationId').above(8);//.toArray();
+          collection.each( item => {
+            console.log('ETA read: ' + JSON.stringify(item.eta) );
+          });
+
+        } catch( err ) {
+          console.error(err);
+        }
+  }
 
   getTravelTime(sourceId, targetId) {
 
     const item = times[sourceId];
-    const foundDestination = item.find( destination => {
-      return destination.id == targetId
+    const foundDestination = item.find( eta => {
+      return eta.destinationId == targetId
     })
 
     return foundDestination ? foundDestination.travelTime : 150;
-  },
+  }
 
   timeToColor(travelTime) {
     let color = [160, 160, 180, 200];
@@ -41,5 +77,3 @@ const TravelMatrix = {
     return color;
   }
 };
-
-export default TravelMatrix;

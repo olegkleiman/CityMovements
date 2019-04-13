@@ -44,13 +44,22 @@ class App extends Component {
       latitude: null,
       regionId: null
     },
-    events: {}
+    events: {},
+    travelMatrix: null
   };
 
   componentDidMount() {
-    requestJson('./assets/nebula.json', (error, response) => {
+    requestJson('./assets/nebula.json', async (error, response) => {
       if (!error) {
-        this.setState({geoJsonData: response});
+
+        const _travelMatrix = new TravelMatrix();
+        _travelMatrix.init('ODSCityMovements');
+
+        this.setState(
+          {
+            geoJsonData: response,
+            travelMatrix: _travelMatrix
+          });
       }
     });
   }
@@ -226,7 +235,6 @@ class App extends Component {
   render() {
 
     const {viewport} = this.state;
-    let regionsCount = 0;
 
     return (<div style={{height: '100%'}}>
 
@@ -243,6 +251,8 @@ class App extends Component {
                    id:'geojson-layer',
                    data: this.state.geoJsonData,
                    filled:true,
+                   // See http://deck.gl/#/documentation/deckgl-api-reference/layers/layer?section=numinstances-number-optional-
+                   // for rational on 'updateTriggers'
                    updateTriggers: {
                     getFillColor: this.state.sourceRegoinId
                    },
@@ -250,11 +260,10 @@ class App extends Component {
                     if( d.properties.Id == this.state.sourceRegoinId ) {
                       return [255, 255, 217, 200]
                     } else {
-                      const travelTime = TravelMatrix.getTravelTime(this.state.sourceRegoinId, d.properties.Id);
-                      console.log(`Travel time between ${this.state.sourceRegoinId} and ${d.properties.Id}: ${travelTime}`);
-                      return TravelMatrix.timeToColor(travelTime);
+                      const travelTime = this.state.travelMatrix.getTravelTime(this.state.sourceRegoinId, d.properties.Id);
+                      // console.log(`Travel time between ${this.state.sourceRegoinId} and ${d.properties.Id}: ${travelTime}`);
+                      return this.state.travelMatrix.timeToColor(travelTime);
                     }
-
                   }
                 })
               ]}>

@@ -1,12 +1,12 @@
 var path = require('path');
 const webpack = require('webpack');
 
-var BUILD_DIR = path.resolve(__dirname, 'dist');
+var BUILD_DIR = path.resolve(__dirname, '../dist');
 
 var config = {
   entry: [
     'babel-polyfill',
-    path.resolve(__dirname, './src/index.jsx')
+    path.resolve(__dirname, 'index.jsx')
   ],
   output: {
     path: BUILD_DIR,
@@ -25,7 +25,7 @@ var config = {
     rules: [
       {
         test: /\.jsx$/,
-        loader: 'babel-loader',
+        loader: 'babel-loader?cacheDirectory',
         exclude: /node_modules/
       }
     ]

@@ -14,8 +14,10 @@
   },
   "scripts": {
     "calculateTimes": "babel-node --inspect-brk ./scripts/calculateTimes.js",
-    "generateMockData": "babel-node --inspect-brk ./scripts/mockTimes.js",
     "build": "webpack -d --watch",
+    "build-parallel": "parallel-webpack -d --watch",
+    "build-worker": "webpack --watch --config ./src/worker/webpack.config.js",
+    "build-app": "webpack --watch --config ./src/webpack.config.js",
     "start": "webpack-dev-server --progress --hot",
     "heroku-postbuild": "webpack -p",
     "start-local": "webpack-dev-server --env.local --progress --hot --open"
@@ -33,19 +35,23 @@
     "d3-fetch": "^1.1.2",
     "d3-request": "^1.0.6",
     "deck.gl": "^6.4.9",
+    "dexie": "^2.0.4",
     "immutable": "^4.0.0-rc.12",
     "is-empty": "^1.2.0",
     "moment": "^2.24.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-map-gl": "^4.1.1",
+    "react-vis": "^1.11.6",
     "webpack": "^4.29.6"
   },
   "devDependencies": {
     "@mapbox/geojson-merge": "^1.0.2",
     "casual": "^1.6.0",
     "node-fetch": "^2.3.0",
+    "parallel-webpack": "^2.3.0",
     "webpack-cli": "^3.3.0",
-    "webpack-dev-server": "^3.2.1"
+    "webpack-dev-server": "^3.2.1",
+    "worker-loader": "^2.0.0"
   }
 }
