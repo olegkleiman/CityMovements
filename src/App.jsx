@@ -52,8 +52,11 @@ class App extends Component {
     requestJson('./assets/nebula.json', async (error, response) => {
       if (!error) {
 
+        const ids =
+          response.features.map( feature => parseInt(feature.properties.Id, 10) );
+
         const _travelMatrix = new TravelMatrix();
-        _travelMatrix.init('ODSCityMovements');
+        _travelMatrix.init('ODSCityMovements', ids);
 
         this.setState(
           {
@@ -256,7 +259,7 @@ class App extends Component {
                    updateTriggers: {
                     getFillColor: this.state.sourceRegoinId
                    },
-                   getFillColor: (d) => {
+                   getFillColor: d => {
                     if( d.properties.Id == this.state.sourceRegoinId ) {
                       return [255, 255, 217, 200]
                     } else {

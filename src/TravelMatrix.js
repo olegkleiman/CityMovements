@@ -1,6 +1,5 @@
 import moment from 'moment';
 import Dexie from 'dexie';
-import times from '../dist/assets/etas.json';
 
 const palette =
 [
@@ -16,13 +15,17 @@ const palette =
   { min: 50, max: 60, color: [5, 25, 77, 200]}
 ];
 
+const DEFAULT_TRAVEL_TIME = 150;
+
 export default class TravelMatrix {
 
   constructor() {
+    this.dbName = '';
     this.initialized = false;
+    this.matrix = new Map();
   }
 
-  async init(dbName) {
+  async init(dbName, regionIds) {
 
         if( await !Dexie.exists(dbName) ) {
           console.log(`${dbName} db does not exists`);
@@ -36,31 +39,47 @@ export default class TravelMatrix {
         db.version(1).stores({
           etas: '++id, originId, destinationId, period, day'
         });
+
         this.initialized = true;
+        this.dbName = dbName;
 
-        try {
+        await Promise.all( regionIds.map( async (regionId) => {
 
-          const collection =
-            await db.etas
-                .where('originId').equals(8)
-                // .and('destinationId').above(8);//.toArray();
-          collection.each( item => {
-            console.log('ETA read: ' + JSON.stringify(item.eta) );
-          });
+          try {
+            const length = await db.etas.where('originId').equals(regionId).count();
+            const collection = await db.etas.where('originId').equals(regionId);
 
-        } catch( err ) {
-          console.error(err);
-        }
+            const _etas = [];
+            await new Promise( (resolve, reject) => {
+              let count = 0;
+              collection.each( item => {
+                _etas.push(item);
+                if( ++count == length )
+                  resolve(true);
+              });
+            })
+
+            this.matrix.set(regionId, _etas);
+
+          } catch( err ) {
+            console.error(err);
+            Promise.reject(false);
+          }
+
+        }));
+
   }
 
   getTravelTime(sourceId, targetId) {
 
-    const item = times[sourceId];
-    const foundDestination = item.find( eta => {
-      return eta.destinationId == targetId
-    })
+    if( !this.initialized ) {
+      return DEFAULT_TRAVEL_TIME;
+    }
 
-    return foundDestination ? foundDestination.travelTime : 150;
+    const collection = this.matrix.get(parseInt(sourceId, 10));
+    const foundDestination = collection.find( item => item.destinationId == parseInt(targetId, 10) );
+
+    return foundDestination ? foundDestination.eta : DEFAULT_TRAVEL_TIME;
   }
 
   timeToColor(travelTime) {
