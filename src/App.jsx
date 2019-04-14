@@ -5,14 +5,17 @@ import DeckGL, {LineLayer, IconLayer, GeoJsonLayer} from 'deck.gl';
 import {json as requestJson} from 'd3-request';
 import {fromJS} from 'immutable';
 import empty from 'is-empty';
+
 const { point, polygon } = require('@turf/helpers');
 const booleanPointInPolygon = require('@turf/boolean-point-in-polygon').default;
 const center = require('@turf/center').default;
 
+import Worker from 'worker-loader!./worker.js';
 import ControlPanel from './ControlPanel';
 import Legend from './Legend';
 import Pin from './Pin';
 import TravelMatrix from './TravelMatrix';
+import Spinner from './Spinner';
 
 const MAPBOX_TOKEN = process.env.MapboxAccessToken;
 
@@ -33,7 +36,7 @@ class App extends Component {
       longitude: 34.788688376385025,
       latitude: 32.08692311125718
     },
-    sourceRegoinId: 8, // initial value corresponding to 'sourceMarker'
+    sourceRegoinId: 0,
     targetMarker: {
       longitude: null,
       latitude: null
@@ -45,26 +48,55 @@ class App extends Component {
       regionId: null
     },
     events: {},
-    travelMatrix: null
+    travelMatrix: null,
+    isLoading: true
   };
 
   componentDidMount() {
-    requestJson('./assets/nebula.json', async (error, response) => {
-      if (!error) {
 
-        const ids =
-          response.features.map( feature => parseInt(feature.properties.Id, 10) );
+    const dbName = 'ODSCityMovements';
 
-        const _travelMatrix = new TravelMatrix();
-        _travelMatrix.init('ODSCityMovements', ids);
+    const worker = new Worker();
+    // worker.addEventListener("message", function (event) {
+    //   console.log('EventListener: ' + event.data);
+    // });
 
-        this.setState(
-          {
-            geoJsonData: response,
-            travelMatrix: _travelMatrix
-          });
-      }
-    });
+    worker.postMessage({'cmd': 'start', 'msg': dbName});
+    worker.onmessage = (event) => {
+      console.log('onMessage: ' + JSON.stringify(event));
+      this.setState({
+        isLoading: false
+      });
+
+      this.processNebulaRegions('./assets/nebula.json', dbName);
+
+    };
+    worker.onerror = (err) => {
+      console.error(err);
+    }
+
+  }
+
+  processNebulaRegions = (geoJsonFile, dbName) => {
+
+      const self = this;
+      requestJson(geoJsonFile, async (error, response) => {
+
+        if (!error) {
+          const ids =
+            response.features.map( feature => parseInt(feature.properties.Id, 10) );
+
+          const _travelMatrix = new TravelMatrix();
+          await _travelMatrix.init(dbName, ids);
+
+          self.setState(
+            {
+              geoJsonData: response,
+              travelMatrix: _travelMatrix,
+              sourceRegoinId: 8  // initial value corresponding to 'sourceMarker'
+            });
+        }
+      });
   }
 
   _onViewportChange = viewport => this.setState({viewport});
@@ -136,7 +168,7 @@ class App extends Component {
     const region = this.pointInPolygon(pt);
     if( !region )
       return;
-      
+
     if( region.center ) {
       this.setState({
         sourceMarker: {
@@ -221,6 +253,22 @@ class App extends Component {
           return null
   }
 
+  renderLoadingPopup() {
+    if( this.state.isLoading ) {
+      return (
+        <Popup latitude={this.state.viewport.latitude}
+               longitude={this.state.viewport.longitude}
+               closeButton={false}
+               tipSize={0}>
+                <h6>Loading...</h6>
+                <Spinner />
+
+        </Popup>)
+    }
+    else
+      return null;
+  }
+
   renderPopup() {
 
     if( this.state.popup
@@ -276,6 +324,7 @@ class App extends Component {
               { this.renderLineLayer() }
             </DeckGL>
             { this.renderPopup() }
+            { this.renderLoadingPopup() }
             { this.renderSourceMarker() }
             { this.renderTargetMarker() }
           </MapGL>

@@ -1,5 +1,5 @@
 import Dexie from 'dexie';
-import matrix from '../../dist/assets/etas.json';
+import matrix from '../dist/assets/etas.json';
 
 console.log('Worker started');
 
@@ -65,7 +65,7 @@ self.addEventListener('message', async function(e) {
   switch (data.cmd) {
     case 'start': {
 
-        const dbName = 'ODSCityMovements';
+        const dbName = data.msg;
         init(dbName);
         self.postMessage(`${dbName} db initialized`);
 

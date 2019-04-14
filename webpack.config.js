@@ -1,5 +1,6 @@
 var path = require('path');
 const webpack = require('webpack');
+var Visualizer = require('webpack-visualizer-plugin');
 
 var BUILD_DIR = path.resolve(__dirname, 'dist');
 
@@ -11,7 +12,8 @@ var config = {
   output: {
     path: BUILD_DIR,
     publicPath: '/',
-    filename: 'bundle.js'
+    filename: 'bundle.js',
+    globalObject: 'this' // See: https://github.com/webpack/webpack/issues/6642
   },
   stats: {
     colors: true,
@@ -27,6 +29,10 @@ var config = {
         test: /\.jsx$/,
         loader: 'babel-loader',
         exclude: /node_modules/
+      },
+      {
+        test: /\.worker\.js$/,
+        loader: 'worker-loader'
       }
     ]
   },
@@ -40,7 +46,8 @@ var config = {
   plugins: [
     new webpack.EnvironmentPlugin({
       MapboxAccessToken: 'pk.eyJ1Ijoib2xlZ2tsZWltYW4iLCJhIjoiY2p1MzliZjJ1MGRkNTRkanR0YW16OWxlOCJ9._UGnwB2vBL9UVKEEiJ8L9g'
-    })
+    }),
+    new Visualizer()
   ]
 
 };
