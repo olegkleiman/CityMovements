@@ -134,6 +134,9 @@ class App extends Component {
 
     const pt = point([event.lngLat[0], event.lngLat[1]]);
     const region = this.pointInPolygon(pt);
+    if( !region )
+      return;
+      
     if( region.center ) {
       this.setState({
         sourceMarker: {
