@@ -37,7 +37,7 @@ export default class TravelMatrix {
 
         const db = new Dexie(dbName);
         db.version(1).stores({
-          etas: '++id, originId, destinationId, period, day'
+          etas: '++id, originId, destinationId, [originId+destinationId], period, day'
         });
 
         this.initialized = true;
@@ -68,6 +68,7 @@ export default class TravelMatrix {
 
         }));
 
+        db.close();
   }
 
   getTravelTime(sourceId, targetId) {

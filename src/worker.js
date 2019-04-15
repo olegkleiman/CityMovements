@@ -12,7 +12,7 @@ const init = async (dbName) =>  {
 
       const db = new Dexie(dbName);
       db.version(1).stores({
-          etas: '++id, originId, destinationId, period, day'
+          etas: '++id, originId, destinationId, [originId+destinationId], period, day'
       });
 
       try {
@@ -28,13 +28,14 @@ const init = async (dbName) =>  {
             await Promise.all(row.map( async (subItem) => {
 
                 try {
-                  const entry = {
+                  const record = {
                     originId: parseInt(subItem.originId, 10),
                     destinationId: parseInt(subItem.destinationId, 10),
-                    eta: subItem.travelTime
+                    eta: subItem.travelTime,
+                    day: subItem.day
                   }
-                  console.log(entry);
-                  const _res = await db.etas.put(entry);
+                  const _res = await db.etas.put(record);
+                  console.log(`record ${JSON.stringify(record)} was put: ${_res}`);
                   columns++;
                   // console.log(`Column: ${columns}. Index: ${_res}`);
                   return _res;

@@ -13,7 +13,7 @@
     ]
   },
   "scripts": {
-    "calculateTimes": "babel-node --inspect-brk ./scripts/calculateTimes.js",
+    "calculateTimes": "babel-node ./scripts/calculateTimes.js",
     "build": "webpack -d --watch",
     "build-parallel": "parallel-webpack -d --watch",
     "build-worker": "webpack --watch --config ./src/worker/webpack.config.js",
@@ -38,6 +38,7 @@
     "dexie": "^2.0.4",
     "immutable": "^4.0.0-rc.12",
     "is-empty": "^1.2.0",
+    "lodash": "^4.17.11",
     "moment": "^2.24.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",

@@ -48,27 +48,22 @@ class App extends Component {
       regionId: null
     },
     events: {},
+    dbName: 'ODSCityMovements',
     travelMatrix: null,
     isLoading: true
   };
 
   componentDidMount() {
 
-    const dbName = 'ODSCityMovements';
-
     const worker = new Worker();
-    // worker.addEventListener("message", function (event) {
-    //   console.log('EventListener: ' + event.data);
-    // });
-
-    worker.postMessage({'cmd': 'start', 'msg': dbName});
+    worker.postMessage({'cmd': 'start', 'msg': this.state.dbName});
     worker.onmessage = (event) => {
       console.log('onMessage: ' + JSON.stringify(event));
       this.setState({
         isLoading: false
       });
 
-      this.processNebulaRegions('./assets/nebula.json', dbName);
+      this.processNebulaRegions('./assets/nebula.json');
 
     };
     worker.onerror = (err) => {
@@ -77,7 +72,7 @@ class App extends Component {
 
   }
 
-  processNebulaRegions = (geoJsonFile, dbName) => {
+  processNebulaRegions = (geoJsonFile) => {
 
       const self = this;
       requestJson(geoJsonFile, async (error, response) => {
@@ -87,7 +82,7 @@ class App extends Component {
             response.features.map( feature => parseInt(feature.properties.Id, 10) );
 
           const _travelMatrix = new TravelMatrix();
-          await _travelMatrix.init(dbName, ids);
+          await _travelMatrix.init(this.state.dbName, ids);
 
           self.setState(
             {
@@ -135,6 +130,10 @@ class App extends Component {
   }
 
   pointInPolygon = (pt) => {
+
+    if( !this.state.geoJsonData ) {
+      return null;
+    }
 
     let region = null;
 
@@ -260,7 +259,10 @@ class App extends Component {
                longitude={this.state.viewport.longitude}
                closeButton={false}
                tipSize={0}>
-                <h6>Loading...</h6>
+                <p style={{
+                    fontSize: '13px',
+                    color: '#6b6b76'
+                  }}>Loading Data</p>
                 <Spinner />
 
         </Popup>)
@@ -331,7 +333,10 @@ class App extends Component {
 
           <ControlPanel containerComponent={this.props.containerComponent}
                         settings={this.state}
-                        onChange={this._updateSettings} />
+                        onChange={this._updateSettings}
+                        dbName={this.state.dbName}
+                        originId={this.state.sourceRegoinId}
+                        destinationId={this.state.targetRegoinId}/>
           <Legend containerComponent={this.props.containerComponent}
                         settings={this.state} />
         </div>

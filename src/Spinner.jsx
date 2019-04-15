@@ -2,7 +2,14 @@ import React from 'react';
 
 const Spinner = () => {
   return (
-      <svg width="57" height="57" viewBox="0 0 57 57" xmlns="http://www.w3.org/2000/svg" stroke="#fff">
+    <>
+      <svg style={{
+                    display: 'block',
+                    margin: 'auto'
+        }}
+        width="57" height="57" viewBox="0 0 57 57"
+        xmlns="http://www.w3.org/2000/svg"
+        stroke="#fff">
           <g fill="#12939A" fillRule="evenodd">
               <g transform="translate(1 1)" strokeWidth="2">
                   <circle cx="5" cy="50" r="5">
@@ -47,6 +54,7 @@ const Spinner = () => {
               </g>
           </g>
       </svg>
+    </>
   )
 }
 

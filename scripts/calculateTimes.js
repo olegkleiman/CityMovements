@@ -46,7 +46,8 @@ for(let i = 0 ;
             const item = {
               originId: regionCenters[i].id,
               destinationId: regionCenter.id,
-              travelTime: eta
+              travelTime: eta,
+              day: 'Su'
             }
             // console.log(item);
             items.push(item);
@@ -81,6 +82,6 @@ function saveLines() {
     if( err )
       console.error(err);
     else
-      console.log(`{out_path} written`);
+      console.log(`${out_path} written`);
   })
 }
