@@ -14,17 +14,12 @@ const styles = theme => ({
   button: {
     marginRight: theme.spacing.unit,
   },
-  instructions: {
-    marginTop: theme.spacing.unit,
-    marginBottom: theme.spacing.unit,
-  },
   nav: {
     float: 'right'
   },
   paper: {
     position: 'absolute',
-    width: theme.spacing.unit * 50,
-    left: 0,
+    width: theme.spacing.unit * 70,
     right: 0,
     marginLeft: 'auto',
     marginRight: 'auto',
@@ -32,7 +27,18 @@ const styles = theme => ({
     boxShadow: theme.shadows[5],
     padding: theme.spacing.unit * 4,
     outline: 'none',
+
+    top: '50%',
+    left: '50%',
+    width: '800px',
+    overflow: 'hidden',
+    transform: 'translate(-50%, -50%)'
   },
+  footer: {
+    borderTop: '1px solid #ccc',
+    backgroundColor: '#F8F8F9',
+    padding: '20px 40px'
+  }
 });
 
 function getSteps() {
@@ -42,11 +48,11 @@ function getSteps() {
 function getStepContent(stepIndex) {
   switch (stepIndex) {
     case 0:
-      return 'Select campaign settings...';
+      return <video width="800" src="https://s3-us-west-2.amazonaws.com/uber-common-public/movement/videos/TutorialMotion1.mp4" autoPlay=""></video>
     case 1:
-      return 'What is an ad group anyways?';
+      return <video width="800" src="https://s3-us-west-2.amazonaws.com/uber-common-public/movement/videos/TutorialMotion2.mp4" autoplay=""></video>;
     case 2:
-      return 'This is the bit I really care about!';
+      return <video width="800" src="https://s3-us-west-2.amazonaws.com/uber-common-public/movement/videos/TutorialMotion3.mp4" autoplay=""></video>;
     default:
       return 'Unknown stepIndex';
   }
@@ -90,9 +96,7 @@ const Tutorial = (props) => {
 
     return (
       <Modal open={open}>
-          <div style={{
-              top: '20%'
-            }} className={classes.paper}>
+          <div className={classes.paper}>
             <Stepper activeStep={activeStep} alternativeLabel>
             {
               steps.map( (label, index) => {
@@ -108,21 +112,26 @@ const Tutorial = (props) => {
               })
             }
             </Stepper>
-            <Button variant="contained"
-                  onClick={onClose}
-                  className={classes.button}>
-                  Skip
-            </Button>
-            <span className={classes.nav}>
-              <Button disabled={activeStep === 0}
-                    onClick={handleBack}
-                    className={classes.backButton}>
-                    Back
+            <div>
+              { getStepContent(activeStep) }
+            </div>
+            <div className={classes.footer}>
+              <Button variant="contained"
+                    onClick={onClose}
+                    className={classes.button}>
+                    Skip
               </Button>
-              <Button variant="contained" color="primary" onClick={handleNext}>
-                {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-              </Button>
-            </span>
+              <span className={classes.nav}>
+                <Button disabled={activeStep === 0}
+                      onClick={handleBack}
+                      className={classes.backButton}>
+                      Back
+                </Button>
+                <Button variant="contained" color="primary" onClick={handleNext}>
+                  {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                </Button>
+              </span>
+            </div>
           </div>
       </Modal>)
 };
