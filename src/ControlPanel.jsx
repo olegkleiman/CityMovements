@@ -18,6 +18,8 @@ const ControlPanel = (props) => {
   const Container = props.containerComponent || defaultContainer;
   const {settings} = props;
 
+  const callback = props.onChange;
+
   const dbName = props.dbName;
   const originId = parseInt(props.originId, 10);
   const destinationId = parseInt(props.destinationId, 10);
@@ -48,29 +50,38 @@ const ControlPanel = (props) => {
         const entries = await db.etas.where('[originId+destinationId]')
                               .equals([originId, destinationId])
                               .toArray();
+        const pattern = {
+          'Su': [],
+          'M': [],
+          'Tu': [],
+          'W': [],
+          'Th': [],
+          'F': [],
+          'Sa': []
+        };
+        const data = [];
 
-        const data = [{
-          x: 'Su',
-          y: _.last( _.intersectionBy(entries, [{ day:'Su' }], 'day')).eta
-        }, {
-          x: 'M',
-          y: 12
-        }, {
-          x: 'Tu',
-          y: 32
-        }, {
-          x: 'W',
-          y: 39
-        }, {
-          x: 'Th',
-          y: 43
-        }, {
-          x: 'F',
-          y: 31
-        }, {
-          x: 'Sa',
-          y: 24
-        }];
+        const groups = _.groupBy(entries, 'day');
+        const _groups = {...pattern, ...groups}; // merge with pattern
+        for (var key in _groups) {
+
+            const array = _groups[key];
+
+            let avg = 0;
+            // reduce only for iterables
+            if( typeof array[Symbol.iterator] === 'function' ) { // see here why this works
+                                                                 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols
+              avg = array.reduce( (accu, item) => {
+                  return accu + item.eta
+              }, 0) / (array.length || 1);
+            }
+
+            data.push({
+                x: key,
+                y: avg
+            });
+
+        }
 
         setData(data);
 
@@ -94,9 +105,30 @@ const ControlPanel = (props) => {
     }
   }
 
+  const _onClick = (event) => {
+    if( callback ) {
+      callback(event);
+    }
+  }
+
   return (
     <Container>
-      <h3>Tel-Aviv Movements</h3>
+      <h3 style={{
+        backgroundColor: '#F7F7F7'
+      }}>
+        <span>Tel-Aviv Movements</span>
+          <svg style={{
+              float: 'right',
+              marginTop: '4px',
+              cursor: 'pointer'
+          }}
+          viewBox="0 0 24 24" fill="none" width="20px" height="20px"
+          onClick={_onClick}>
+            <title>Show tutorial</title>
+            <path d="M12 1C5.9 1 1 5.9 1 12s4.9 11 11 11 11-4.9 11-11S18.1 1 12 1zm0 19c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8z" fill="currentColor">
+            </path>,<path d="M13 16h-3v2h3v-2z" fill="currentColor"></path>,<path d="M12 6c-1.9 0-3.5 1.3-3.9 3.2l2.9.6c.1-.5.5-.8 1-.8s1 .5 1 1c0 .4-.2.7-.6.9L10 12.1v3h3v-1l.7-.3c1.4-.7 2.3-2.1 2.3-3.6C16 7.8 14.2 6 12 6z" fill="currentColor"></path>
+          </svg>
+      </h3>
       <p>The map shows the average travel time from the origin zone to all other zones for the selected date-time range.</p>
       <XYPlot height={180} width= {320} xType="ordinal">
         <VerticalGridLines />
@@ -107,7 +139,7 @@ const ControlPanel = (props) => {
               style={axisStyle}/>
 
         <VerticalBarSeries data={data} />
-      </XYPlot>)
+      </XYPlot>
     </Container>
   );
 

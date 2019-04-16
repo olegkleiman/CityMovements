@@ -16,6 +16,7 @@ import Legend from './Legend';
 import Pin from './Pin';
 import TravelMatrix from './TravelMatrix';
 import Spinner from './Spinner';
+import Tutorial from './Tutorial';
 
 const MAPBOX_TOKEN = process.env.MapboxAccessToken;
 
@@ -50,7 +51,8 @@ class App extends Component {
     events: {},
     dbName: 'ODSCityMovements',
     travelMatrix: null,
-    isLoading: true
+    isLoading: true,
+    showTutorial: false
   };
 
   componentDidMount() {
@@ -117,7 +119,7 @@ class App extends Component {
     let disctrictInfo = {};
 
     const region = this.pointInPolygon(pt);
-    if( region.center ) {
+    if( region && region.center ) {
         this.setState({
           targetMarker: {
             longitude: region.center.geometry.coordinates[0],
@@ -253,8 +255,7 @@ class App extends Component {
   }
 
   renderLoadingPopup() {
-    if( this.state.isLoading ) {
-      return (
+      return this.state.isLoading && (
         <Popup latitude={this.state.viewport.latitude}
                longitude={this.state.viewport.longitude}
                closeButton={false}
@@ -266,9 +267,6 @@ class App extends Component {
                 <Spinner />
 
         </Popup>)
-    }
-    else
-      return null;
   }
 
   renderPopup() {
@@ -286,6 +284,25 @@ class App extends Component {
     } else {
       return null;
     }
+  }
+
+  _updateSettings = (event) => {
+    console.log(event);
+    this.setState({
+      showTutorial: true
+    });
+  }
+
+  _closeTutorial = () => {
+    this.setState({
+      showTutorial: false
+    });
+  }
+
+  renderTutorial() {
+    return this.state.showTutorial &&
+          <Tutorial onClose={this._closeTutorial}
+                    show={this.state.showTutorial}/>;
   }
 
   render() {
@@ -329,6 +346,7 @@ class App extends Component {
             { this.renderLoadingPopup() }
             { this.renderSourceMarker() }
             { this.renderTargetMarker() }
+            { this.renderTutorial() }
           </MapGL>
 
           <ControlPanel containerComponent={this.props.containerComponent}
