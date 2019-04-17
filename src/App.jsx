@@ -52,6 +52,8 @@ class App extends Component {
     dbName: 'ODSCityMovements',
     travelMatrix: null,
     isLoading: true,
+    showETA: false,
+    calculatedETA: 0,
     showTutorial: false
   };
 
@@ -120,12 +122,17 @@ class App extends Component {
 
     const region = this.pointInPolygon(pt);
     if( region && region.center ) {
+
+        const _eta = this.state.travelMatrix.getTravelTime(this.state.sourceRegoinId, region.id);
+
         this.setState({
           targetMarker: {
             longitude: region.center.geometry.coordinates[0],
             latitude: region.center.geometry.coordinates[1]
           },
-          targetRegoinId: region.id
+          targetRegoinId: region.id,
+          showETA: true,
+          calculatedETA: _eta
         });
     }
 
@@ -171,12 +178,19 @@ class App extends Component {
       return;
 
     if( region.center ) {
+      const _eta = this.state.travelMatrix.getTravelTime(region.id,
+                                                         this.state.targetRegoinId);
       this.setState({
         sourceMarker: {
           longitude: region.center.geometry.coordinates[0],
           latitude: region.center.geometry.coordinates[1]
         },
-        sourceRegoinId: region.id
+        sourceRegoinId: region.id,
+        showETA: true,
+        calculatedETA: this.state.targetRegoinId != 0 ?
+                        this.state.travelMatrix.getTravelTime(region.id,
+                                                             this.state.targetRegoinId)
+                        : 0
       });
     }
   };
@@ -185,12 +199,17 @@ class App extends Component {
     const pt = point([event.lngLat[0], event.lngLat[1]]);
     const region = this.pointInPolygon(pt);
     if( region.center ) {
+
+      const _eta = this.state.travelMatrix.getTravelTime(this.state.sourceRegoinId, region.id);
+
       this.setState({
         targetMarker: {
           longitude: region.center.geometry.coordinates[0],
           latitude: region.center.geometry.coordinates[1]
         },
-        targetRegoinId: region.id
+        targetRegoinId: region.id,
+        showETA: true,
+        calculatedETA: _eta
       });
     }
   };
@@ -299,6 +318,28 @@ class App extends Component {
     });
   }
 
+  _clonETAClose = () => {
+    this.setState({
+      showETA: false
+    })
+  }
+
+  renderETA() {
+      return this.state.showETA &&
+      (this.state.calculatedETA != 0 ) &&
+        <Popup latitude={this.state.targetMarker.latitude}
+               longitude={this.state.targetMarker.longitude}
+               anchor={'bottom-left'}
+               offsetLeft={20}
+               offsetTop={-20}
+               closeButton={true}
+               onClose={this._clonETAClose}
+               tipSize={0}>
+          <div>Average travel time to destination: {this.state.calculatedETA} min</div>
+        </Popup>
+
+  }
+
   renderTutorial() {
     return this.state.showTutorial &&
           <Tutorial onClose={this._closeTutorial}
@@ -342,11 +383,12 @@ class App extends Component {
               ]}>
               { this.renderLineLayer() }
             </DeckGL>
-            { this.renderPopup() }
+            { /*this.renderPopup()*/ }
             { this.renderLoadingPopup() }
             { this.renderSourceMarker() }
             { this.renderTargetMarker() }
             { this.renderTutorial() }
+            { this.renderETA() }
           </MapGL>
 
           <ControlPanel containerComponent={this.props.containerComponent}

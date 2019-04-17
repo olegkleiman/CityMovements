@@ -50,9 +50,9 @@ function getStepContent(stepIndex) {
     case 0:
       return <video width="800" src="https://s3-us-west-2.amazonaws.com/uber-common-public/movement/videos/TutorialMotion1.mp4" autoPlay=""></video>
     case 1:
-      return <video width="800" src="https://s3-us-west-2.amazonaws.com/uber-common-public/movement/videos/TutorialMotion2.mp4" autoplay=""></video>;
+      return <video width="800" src="https://s3-us-west-2.amazonaws.com/uber-common-public/movement/videos/TutorialMotion2.mp4" autoPlay=""></video>;
     case 2:
-      return <video width="800" src="https://s3-us-west-2.amazonaws.com/uber-common-public/movement/videos/TutorialMotion3.mp4" autoplay=""></video>;
+      return <video width="800" src="https://s3-us-west-2.amazonaws.com/uber-common-public/movement/videos/TutorialMotion3.mp4" autoPlay=""></video>;
     default:
       return 'Unknown stepIndex';
   }
