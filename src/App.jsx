@@ -14,7 +14,7 @@ import Worker from 'worker-loader!./worker.js';
 import ControlPanel from './ControlPanel';
 import Legend from './Legend';
 import Pin from './Pin';
-import TravelMatrix from './TravelMatrix';
+import { TravelMatrix, UNKNOWN_TRAVEL_TIME } from './TravelMatrix';
 import Spinner from './Spinner';
 import Tutorial from './Tutorial';
 
@@ -187,10 +187,7 @@ class App extends Component {
         },
         sourceRegoinId: region.id,
         showETA: true,
-        calculatedETA: this.state.targetRegoinId != 0 ?
-                        this.state.travelMatrix.getTravelTime(region.id,
-                                                             this.state.targetRegoinId)
-                        : 0
+        calculatedETA: this.state.targetRegoinId != 0 ? _eta : 0
       });
     }
   };
@@ -335,7 +332,7 @@ class App extends Component {
                closeButton={true}
                onClose={this._clonETAClose}
                tipSize={0}>
-          <div>Average travel time to destination: {this.state.calculatedETA} min</div>
+          <div>Average travel time to destination: { this.state.calculatedETA == UNKNOWN_TRAVEL_TIME ? 'Unknown' : `${this.state.calculatedETA} min` }</div>
         </Popup>
 
   }

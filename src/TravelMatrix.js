@@ -15,9 +15,10 @@ const palette =
   { min: 50, max: 60, color: [5, 25, 77, 200]}
 ];
 
-const DEFAULT_TRAVEL_TIME = 150;
+const UNKNOWN_TRAVEL_TIME = 150;
+const DEFAULT_COLOR = [160, 160, 180, 200];
 
-export default class TravelMatrix {
+class TravelMatrix {
 
   constructor() {
     this.dbName = '';
@@ -74,17 +75,17 @@ export default class TravelMatrix {
   getTravelTime(sourceId, targetId) {
 
     if( !this.initialized ) {
-      return DEFAULT_TRAVEL_TIME;
+      return UNKNOWN_TRAVEL_TIME;
     }
 
     const collection = this.matrix.get(parseInt(sourceId, 10));
     const foundDestination = collection.find( item => item.destinationId == parseInt(targetId, 10) );
 
-    return foundDestination ? foundDestination.eta : DEFAULT_TRAVEL_TIME;
+    return foundDestination ? foundDestination.eta : UNKNOWN_TRAVEL_TIME;
   }
 
   timeToColor(travelTime) {
-    let color = [160, 160, 180, 200];
+    let color = DEFAULT_COLOR;
     for(let i = 0; i < palette.length; i++) {
       if( travelTime <= palette[i].max ) {
         const _color = palette[i].color;
@@ -92,8 +93,8 @@ export default class TravelMatrix {
         break;
       }
     }
-
-    // console.log(color);
     return color;
   }
 };
+
+export { TravelMatrix, UNKNOWN_TRAVEL_TIME };
