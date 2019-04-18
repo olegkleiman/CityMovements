@@ -1,7 +1,7 @@
 {
   "name": "CityMovements",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/index.jsx",
   "license": "MIT",
   "babel": {
     "presets": [
@@ -18,9 +18,8 @@
     "build-parallel": "parallel-webpack -d --watch",
     "build-worker": "webpack --watch --config ./src/worker/webpack.config.js",
     "build-app": "webpack --watch --config ./src/webpack.config.js",
-    "start": "serve",
+    "start": "webpack-dev-server --progress --hot",
     "heroku-postbuild": "webpack -p",
-    "serve": "webpack-dev-server --progress --hot",
     "start-local": "webpack-dev-server --env.local --progress --hot --open"
   },
   "dependencies": {
