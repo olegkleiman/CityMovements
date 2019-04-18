@@ -54,7 +54,8 @@ class App extends Component {
     isLoading: true,
     showETA: false,
     calculatedETA: 0,
-    showTutorial: false
+    showTutorial: false,
+    travelMode: 'transit'
   };
 
   componentDidMount() {
@@ -302,11 +303,25 @@ class App extends Component {
     }
   }
 
-  _updateSettings = (event) => {
-    console.log(event);
-    this.setState({
-      showTutorial: true
-    });
+  _updateSettings = (parcel) => {
+
+    switch( parcel.cmd ) {
+
+      case 'tutorial': {
+        this.setState({
+          showTutorial: true
+        })
+      }
+      break;
+
+      case 'travelMode': {
+        this.setState({
+          travelMode: parcel.data
+        })
+      }
+      break;
+
+    }
   }
 
   _closeTutorial = () => {

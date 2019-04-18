@@ -47,7 +47,8 @@ for(let i = 0 ;
               originId: regionCenters[i].id,
               destinationId: regionCenter.id,
               travelTime: eta,
-              day: 'Su'
+              day: 'Su',
+              mode: 'transit'
             }
             // console.log(item);
             items.push(item);

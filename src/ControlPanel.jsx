@@ -107,8 +107,20 @@ const ControlPanel = (props) => {
 
   const _onClick = (event) => {
     if( callback ) {
-      callback(event);
+      callback({
+        cmd: 'tutorial',
+        data: event
+      });
     }
+  }
+
+  const _onModeChange = (event) => {
+    if( callback ) {
+      callback({
+        cmd: 'travelMode',
+        data: event.target.value
+      });
+      }
   }
 
   return (
@@ -130,6 +142,12 @@ const ControlPanel = (props) => {
           </svg>
       </h3>
       <p>The map shows the average travel time from the origin zone to all other zones for the selected date-time range.</p>
+      <div>
+          <select onChange={ _onModeChange }>
+            <option value='transit'>Transit</option>
+            <option value='driving'>Driving</option>
+          </select>
+      </div>
       <XYPlot height={180} width= {320} xType="ordinal">
         <VerticalGridLines />
         <HorizontalGridLines />
